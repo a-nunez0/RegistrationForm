@@ -3,19 +3,19 @@ function participantTemplate(count) {
       <section class="participant participant${count}">
         <p>Participant ${count}</p>
         <div class="item">
-          <label for="fname${count}">First Name<span>*</span></label>
-          <input id="fname${count}" type="text" name="fname${count}" required>
+          <label for="fname${count}">First Name</label>
+          <input id="fname${count}" type="text" name="fname${count}">
         </div>
         <div class="item activities">
-          <label for="activity${count}">Activity #<span>*</span></label>
+          <label for="activity${count}">Activity #</label>
           <input id="activity${count}" type="text" name="activity${count}">
         </div>
         <div class="item">
-          <label for="fee${count}">Fee ($)<span>*</span></label>
+          <label for="fee${count}">Fee ($)</label>
           <input id="fee${count}" type="number" name="fee${count}">
         </div>
         <div class="item">
-          <label for="date${count}">Desired Date <span>*</span></label>
+          <label for="date${count}">Desired Date</label>
           <input id="date${count}" type="date" name="date${count}">
         </div>
         <div class="item">
@@ -38,36 +38,50 @@ function participantTemplate(count) {
         </div>
       </section>
     `;
-}
+  }
   
-document.getElementById("add").addEventListener("click", function () {
+  document.getElementById("add").addEventListener("click", function () {
     const container = document.querySelector(".participants");
     const count = container.querySelectorAll("section.participant").length + 1;
     const addButton = document.getElementById("add");
   
-    // Insert the new participant section right before the add button
     addButton.insertAdjacentHTML("beforebegin", participantTemplate(count));
-});
+  });
   
-document.querySelector("form").addEventListener("submit", function (event) {
+  document.querySelector("form").addEventListener("submit", function (event) {
     event.preventDefault();
   
-    const participantSections = document.querySelectorAll("section.participant");
+    const participantSections = document.querySelectorAll("section[class^='participant']");
     let totalFees = 0;
     let filledParticipants = 0;
   
-    participantSections.forEach(section => {
-      const fnameInput = section.querySelector('input[id^="fname"]');
-      const feeInput = section.querySelector('input[id^="fee"]');
+    participantSections.forEach((section, index) => {
+      let isFilled = false;
   
-      if (fnameInput && fnameInput.value.trim() !== "") {
+      const fname = section.querySelector(`input[id^="fname"]`);
+      const fee = section.querySelector(`input[id^="fee"]`);
+  
+      // make sure the info is filled
+      if (fname && fname.value.trim() !== "") {
+        isFilled = true;
         filledParticipants++;
   
-        const feeValue = parseFloat(feeInput.value);
+        const feeValue = parseFloat(fee.value);
         if (!isNaN(feeValue)) {
           totalFees += feeValue;
         }
       }
+  
+      // make sure that the next forms are not required, if not the nect form will be required to fill to submit and last form will not be counted, even if filled.
+      //This is required, if not it will cause a little problem :/
+      const inputs = section.querySelectorAll("input, select");
+      inputs.forEach(input => {
+        if (index === 0) {
+          input.required = true;
+        } else {
+          input.required = false;
+        }
+      });
     });
   
     const adultName = document.getElementById("adult_name").value;
@@ -77,6 +91,5 @@ document.querySelector("form").addEventListener("submit", function (event) {
     summary.style.display = "block";
   
     summary.innerText = `Thank you ${adultName} for registering. You have registered ${filledParticipants} participant${filledParticipants !== 1 ? "s" : ""} and owe $${totalFees.toFixed(2)} in Fees.`;
-});
-  
+  });
   
