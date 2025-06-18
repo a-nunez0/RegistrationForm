@@ -172,3 +172,22 @@ button:hover {
       width: 100%;
     }
 }
+
+#summary {
+    display: none;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.participants {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+#add {
+    grid-column: 1 / -1;
+    justify-self: start;
+}
+  
